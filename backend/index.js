@@ -4,8 +4,25 @@ import express from "express";
 import { entriesRouter } from "./routes/entries.js";
 
 const app = express();
-const frontendOrigin = process.env.FRONTEND_ORIGIN;
-app.use(cors({ origin: frontendOrigin || "*" }));
+
+const allowedOrigins = (process.env.FRONTEND_ORIGIN || "")
+  .split(",")
+  .map((o) => o.trim().replace(/\/$/, ""))
+  .filter(Boolean);
+if (allowedOrigins.length === 0) allowedOrigins.push("*");
+
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true);
+      if (allowedOrigins.includes("*")) return cb(null, true);
+      const normalized = origin.replace(/\/$/, "");
+      return cb(null, allowedOrigins.includes(normalized));
+    },
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Accept"],
+  })
+);
 app.use(express.json());
 
 app.get("/", (req, res) => {
