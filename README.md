@@ -77,7 +77,7 @@ The app can be deployed so it is permanently accessible at a public URL. Example
 
 1. **Vercel (frontend):** In project **Settings → Environment Variables**, add `VITE_API_URL` = your Railway backend URL (e.g. `https://your-backend.up.railway.app`) with **no trailing slash**. Redeploy so the new value is baked into the build.
 2. **Railway (backend):** In the backend service **Variables**, set `FRONTEND_ORIGIN` = your Vercel URL (e.g. `https://viper-mood-journal.vercel.app`). Redeploy so CORS allows the frontend origin.
-3. **Migrations:** If the production database is fresh, run once: `railway run npx prisma migrate deploy` from the `backend` directory (with Railway CLI linked to the project), or run the same command in a one-off job. This applies the schema to Railway Postgres.
+3. **Migrations:** The backend runs `prisma migrate deploy` on every start (see `backend/package.json` start script), so the schema is applied automatically when the container starts on Railway. You do not need to run migrations from your local machine (and you can't reach Railway's internal DB host from local anyway).
 4. **Verify:** Open the Vercel URL, submit an entry, confirm the AI response and that entries persist after refresh.
 
 - **Backend + PostgreSQL:** Deploy to [Railway](https://railway.app). Root directory `backend`, Dockerfile. Env: `DATABASE_URL`, `ANTHROPIC_API_KEY`, `FRONTEND_ORIGIN`.
