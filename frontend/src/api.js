@@ -1,4 +1,15 @@
-const API_BASE = "/api";
+const PRODUCTION_API_URL = "https://viper-mood-journal-production.up.railway.app";
+
+function getApiBase() {
+  const env = import.meta.env.VITE_API_URL;
+  if (env) return env.replace(/\/$/, "");
+  if (typeof window !== "undefined" && window.location.origin === "https://viper-mood-journal.vercel.app") {
+    return PRODUCTION_API_URL;
+  }
+  return "/api";
+}
+
+const API_BASE = getApiBase();
 
 async function parseErrorResponse(response) {
   let message = response.statusText || "Request failed";

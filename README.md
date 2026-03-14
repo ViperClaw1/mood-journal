@@ -69,6 +69,20 @@ To give clients or stakeholders a temporary public URL to try the app:
 
 **Caveats:** Your machine must stay on and connected. Free ngrok URLs are temporary and change each run. Do not leave ngrok running unattended with sensitive data.
 
+## Production (Railway + Vercel)
+
+The app can be deployed so it is permanently accessible at a public URL. Example live frontend: **https://viper-mood-journal.vercel.app**.
+
+**After backend and frontend are deployed, complete these steps:**
+
+1. **Vercel (frontend):** In project **Settings → Environment Variables**, add `VITE_API_URL` = your Railway backend URL (e.g. `https://your-backend.up.railway.app`) with **no trailing slash**. Redeploy so the new value is baked into the build.
+2. **Railway (backend):** In the backend service **Variables**, set `FRONTEND_ORIGIN` = your Vercel URL (e.g. `https://viper-mood-journal.vercel.app`). Redeploy so CORS allows the frontend origin.
+3. **Migrations:** If the production database is fresh, run once: `railway run npx prisma migrate deploy` from the `backend` directory (with Railway CLI linked to the project), or run the same command in a one-off job. This applies the schema to Railway Postgres.
+4. **Verify:** Open the Vercel URL, submit an entry, confirm the AI response and that entries persist after refresh.
+
+- **Backend + PostgreSQL:** Deploy to [Railway](https://railway.app). Root directory `backend`, Dockerfile. Env: `DATABASE_URL`, `ANTHROPIC_API_KEY`, `FRONTEND_ORIGIN`.
+- **Frontend:** Deploy to [Vercel](https://vercel.com). Root Directory `frontend`. Env: `VITE_API_URL` = Railway backend URL.
+
 ## Publishing this repo to GitHub
 
 1. Create a **private** repository on GitHub (e.g. [ViperClaw1/mood-journal](https://github.com/ViperClaw1)); do not add a README or .gitignore when creating it.
@@ -84,4 +98,3 @@ To give clients or stakeholders a temporary public URL to try the app:
    ```
 
    Replace `ViperClaw1/mood-journal` with your actual repo URL if different.
-# mood-journal
