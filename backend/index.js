@@ -1,8 +1,11 @@
 import "dotenv/config";
+import cors from "cors";
 import express from "express";
 import { entriesRouter } from "./routes/entries.js";
 
 const app = express();
+const frontendOrigin = process.env.FRONTEND_ORIGIN;
+app.use(cors({ origin: frontendOrigin || "*" }));
 app.use(express.json());
 
 app.get("/", (req, res) => {
